@@ -2,10 +2,11 @@
 
 namespace App\DTOs;
 
-class ApiResponse
+class ApiResponseDTO
 {
     public function __construct(
-        public ?array $message = [],
+        // public ?array $message = [],
+        public string $message = '',
         public mixed $data = null,
     ) {}
 }

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 // =========================== Product ===============================
 Route::apiResource('products', ProductController::class);
-Route::post('{product}/restore', [ProductController::class, 'restore'])->withTrashed();
+Route::post('{productWithTrashed}/restore', [ProductController::class, 'restore'])->withTrashed();
 Route::delete('{productWithTrashed}/force', [ProductController::class, 'forceDelete'])->withTrashed();
 // =========================== Product ===============================
 // =========================== Auth ===============================

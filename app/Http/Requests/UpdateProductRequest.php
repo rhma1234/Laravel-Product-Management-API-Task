@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\CurrencyEnum;
 use App\Enums\ProductStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class UpdateProductRequest extends FormRequest
@@ -21,7 +22,7 @@ class UpdateProductRequest extends FormRequest
             'name' => ['sometimes', 'array'],
             'name.en' => ['sometimes', 'string'],
             'name.ar' => ['sometimes', 'string'],
-
+            'image' => ['nullable', 'image', 'max:2048'],
             'description' => ['nullable', 'array'],
             'description.en' => ['nullable', 'string'],
             'description.ar' => ['nullable', 'string'],
@@ -31,7 +32,7 @@ class UpdateProductRequest extends FormRequest
             'status' => ['sometimes', new Enum(ProductStatusEnum::class)],
             'category_id' => ['sometimes', 'exists:categories,id'],
             'tag_ids' => ['nullable', 'array'],
-            'tag_ids.*' => ['exists:tags,id'],
+            'tag_ids.*' => [Rule::exists('tags', 'id')],
         ];
     }
 }

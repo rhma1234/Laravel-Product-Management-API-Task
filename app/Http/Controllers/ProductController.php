@@ -31,9 +31,9 @@ class ProductController extends Controller implements HasMiddleware
                 AllowedFilter::exact('tag_id', 'tags.id'),
             ])
             ->get();
-            $products->load(['tags', 'category']);
+        $products->load(['tags', 'category']);
 
-        return response()->json(ProductResource::collection($products));
+        return $this->success(data: ProductResource::collection($products));
     }
 
     public function show(Product $product): JsonResponse
@@ -45,7 +45,7 @@ class ProductController extends Controller implements HasMiddleware
 
     public function destroy(Product $product): JsonResponse
     {
-
+        // TODO: use Policy
         $userId = Auth::user()->id;
         if ($product->user_id !== $userId) {
             return response()->json([
@@ -58,12 +58,12 @@ class ProductController extends Controller implements HasMiddleware
 
     }
 
-    // public function restore(Product $product)
-    // {
-    //     $product->restore();
+    public function restore(Product $productWithTrashed)
+    {
+        $productWithTrashed->restore();
 
-    //     return $this->success(ProductResource::make($product) ) ;
-    // }
+        return $this->success(ProductResource::make($productWithTrashed));
+    }
 
     public function forceDelete(Product $productWithTrashed): JsonResponse
     {
@@ -76,26 +76,32 @@ class ProductController extends Controller implements HasMiddleware
     {
         $data = $request->validated();
         /** @var Product $product */
+        // TODO: isolate this logic to Action
         $product = Product::create($request->safe()->except(['tag_ids', 'image']));
         $product->syncTags($request->tag_ids);
         if ($request->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
             $product->addMedia($request->file(Product::MEDIA_COLLECTION_IMAGES))->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
         }
 
-        return $this->success(ProductResource::make($product), __('messages.product_stored'));
+        return $this->success(message: __('messages.product_stored'));
     }
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
         // TODO: update images
         $product->update($request->safe()->except(['tag_ids', 'image']));
+        // TODO: isolate it to Action
         $product->syncTags($request->tag_ids);
-        if ($request->hasFile('image')) {
-            $product->clearMediaCollection('image');
-            $product->addMediaFromRequest('image')->toMediaCollection('image');
 
-            return $this->success(ProductResource::make($product), __('messages.product_updated'));
+        if ($request->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
+            $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
+
+            $product->addMediaFromRequest(Product::MEDIA_COLLECTION_IMAGES)
+                ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
 
         }
+
+        return $this->success(message: __('messages.product_updated'));
+
     }
 }

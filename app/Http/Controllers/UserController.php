@@ -15,6 +15,7 @@ class UserController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $user = User::create($request->validated());
+        // TODO: use resource
 
         return $this->success($user, __('messages.register'));
     }
@@ -34,6 +35,6 @@ class UserController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-        return $this->success(__('messages.logged_out'));
+        return $this->success(message: __('messages.logged_out'));
     }
 }
