@@ -11,6 +11,7 @@ class UpdateProductRequest extends FormRequest
 {
     public function authorize(): bool
     {
+        // TODO 7: use policy https://laravel.com/docs/12.x/authorization
         return true;
     }
 

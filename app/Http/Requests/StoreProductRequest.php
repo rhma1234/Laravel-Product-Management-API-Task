@@ -33,10 +33,9 @@ class StoreProductRequest extends FormRequest
             'description.en' => ['nullable', 'string'],
             'description.ar' => ['nullable', 'string'],
             'price' => ['required', 'numeric', 'min:0'],
-            'currency' => ['required', Rule::enum(CurrencyEnum::class)], // TODO:DONE
+            'currency' => ['required', Rule::enum(CurrencyEnum::class)],
             'status' => ['required', Rule::enum(ProductStatusEnum::class)],
             'category_id' => ['required',  Rule::exists('categories', 'id')],
-            // TODO:DONE
             'tag_ids' => ['nullable', 'array'],
             'tag_ids.*' => [Rule::exists('tags', 'id')],
         ];

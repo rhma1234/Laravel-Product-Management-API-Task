@@ -25,11 +25,12 @@ class UserController extends Controller
             return response()->json([
                 'message' => 'Invalid email or password',
             ], Response::HTTP_UNAUTHORIZED);
-            // TODO: "done"what is the difference between 401, 403
+
         }
 
         $user = User::whereEmail($request->email)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
+        // TODO: fix this response
 
         return response()->json([
             'message' => 'Login Successful',
@@ -42,6 +43,7 @@ class UserController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
+        // TODO: fix this response
         return response()->json([
             'message' => 'Logout Successful',
         ]);

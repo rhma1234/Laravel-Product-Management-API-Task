@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 use App\Enums\CurrencyEnum;
-use App\Enums\ProductStatusEnum;
 // use Illuminate\Container\Attributes\Tag;
+use App\Enums\ProductStatusEnum;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\belongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Illuminate\Support\Facades\Auth;
+
+// #[UsePolicy(ProductPolicy::class)]
 class Product extends Model implements HasMedia
 {
     use HasFactory;
@@ -31,6 +31,8 @@ class Product extends Model implements HasMedia
         'user_id',
     ];
 
+    public const MEDIA_COLLECTION_IMAGES = 'image';
+
     protected $casts = [
         'name' => 'array',
         'description' => 'array',
@@ -44,25 +46,24 @@ class Product extends Model implements HasMedia
 
     }
 
-    public function tags(): belongsToMany // TODO
+    public function tags(): BelongsToMany
     {
-        // TODO
         return $this->belongsToMany(Tag::class);
     }
 
-    public function resolveRouteBinding($value, $field = null): Product
+    public function syncTags(array $tagIds): void
     {
-        return static::withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->firstOrFail();
+        if (empty($tagIds)) {
+            return;
+        }
+
+        $this->tags()->sync($tagIds);
     }
 
-   protected static function booted()
-    {
+    // public function resolveRouteBinding($value, $field = null): Product
+    // {
+    //     return static::withTrashed()->where($field ?? $this->getRouteKeyName(), $value)->firstOrFail();
+    // }
 
-        static::updating(function ($product) {
-            if (  $product->user_id !== Auth::id()) {
-
-                throw new ModelNotFoundException('Unauthorized to update this product.');
-            }
-        });
-    }
+    protected static function booted() {}
 }
