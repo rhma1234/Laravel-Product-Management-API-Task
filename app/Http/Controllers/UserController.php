@@ -16,36 +16,24 @@ class UserController extends Controller
     {
         $user = User::create($request->validated());
 
-        return response()->json($user);
+        return $this->success($user, __('messages.register'));
     }
 
     public function login(LoginRequest $request): JsonResponse
     {
         if (! Auth::attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'message' => 'Invalid email or password',
-            ], Response::HTTP_UNAUTHORIZED);
-
+            return $this->error(__('messages.login_error'), Response::HTTP_UNAUTHORIZED);
         }
-
         $user = User::whereEmail($request->email)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken;
-        // TODO: fix this response
 
-        return response()->json([
-            'message' => 'Login Successful',
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return $this->success($token, __('messages.logged_in'));
     }
 
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
-        // TODO: fix this response
-        return response()->json([
-            'message' => 'Logout Successful',
-        ]);
+        return $this->success(__('messages.logged_out'));
     }
 }

@@ -14,22 +14,9 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'status' => $this->status,
-            // TODO: isolate it to other resource + use whenLoaded function
-            'category' => $this->category
-                ? [
-                    'id' => $this->category->id,
-                    'name' => $this->category->name,
-                ]
-                : null,
-            // TODO: isolate it to other resource + use whenLoaded function
+            'category' => CategoryResource::make($this->whenLoaded('category')),
+            'tags' => TagResource::collection($this->whenLoaded('tags')),
 
-            // tags: array of [id, name]
-            'tags' => $this->tags->map(function ($tag) {
-                return [
-                    'id' => $tag->id,
-                    'name' => $tag->name,
-                ];
-            }),
         ];
     }
 }

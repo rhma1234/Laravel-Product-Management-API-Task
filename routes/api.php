@@ -2,15 +2,16 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
-Route::group(function () {
-    // TODO: what is the difference resource and resourceApi?
-    Route::resource('products', ProductController::class);
-    Route::post('logout', [UserController::class, 'logout']);
-    Route::post('{product}/restore', [ProductController::class, 'restore']);
-    Route::delete('{product}/force', [ProductController::class, 'forceDelete']);
-});
-
+// =========================== Product ===============================
+Route::apiResource('products', ProductController::class);
+Route::post('{product}/restore', [ProductController::class, 'restore'])->withTrashed();
+Route::delete('{productWithTrashed}/force', [ProductController::class, 'forceDelete'])->withTrashed();
+// =========================== Product ===============================
+// =========================== Auth ===============================
+Route::post('logout', [UserController::class, 'logout']);
 Route::post('register', [UserController::class, 'register']);
 Route::post('login', [UserController::class, 'login']);
+// =========================== Auth ===============================

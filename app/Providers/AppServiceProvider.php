@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Product;
 use App\Observers\ProductObserver;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // TODO: what is the difference between firstOrFail & findOrFail?
         Product::observe(ProductObserver::class);
+
+        Route::bind('productWithTrashed', function (string $value) {
+            return Product::withTrashed()->where('id', $value)->firstOrFail();
+        });
     }
 }

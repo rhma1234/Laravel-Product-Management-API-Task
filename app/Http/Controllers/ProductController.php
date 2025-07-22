@@ -10,6 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class ProductController extends Controller implements HasMiddleware
 {
@@ -22,22 +24,16 @@ class ProductController extends Controller implements HasMiddleware
 
     public function index(Request $request): JsonResponse
     {
-        // TODO: please enhance this filter query
-        $query = Product::filter();
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-        if ($request->filled('category_id')) {
-            $query->where('category_id', $request->category_id);
-        }
+        $products = QueryBuilder::for(Product::class)
+            ->allowedFilters([
+                'status',
+                'category_id',
+                AllowedFilter::exact('tag_id', 'tags.id'),
+            ])
+            ->get();
+            $products->load(['tags', 'category']);
 
-        if ($request->filled('tag_id')) {
-            $query->whereHas('tags', fn ($q) => $q->where('id', $request->tag_id));
-        }
-        // TODO: please use resource
-
-        return response()->json($query->get());
-
+        return response()->json(ProductResource::collection($products));
     }
 
     public function show(Product $product): JsonResponse
@@ -49,7 +45,7 @@ class ProductController extends Controller implements HasMiddleware
 
     public function destroy(Product $product): JsonResponse
     {
-        // TODO: use laravel policy
+
         $userId = Auth::user()->id;
         if ($product->user_id !== $userId) {
             return response()->json([
@@ -58,27 +54,22 @@ class ProductController extends Controller implements HasMiddleware
         }
         $product->delete();
 
-        // TODO: use APi Response
-        // return $this->success(data: ProductResource::make($product));
-
-        return response()->json([
-            'alert' => __('messages.product_soft_deleted'),
-        ]);
+        return $this->success(ProductResource::make($product));
 
     }
 
-    public function restore(Product $product) // TODO: use binding model
+    // public function restore(Product $product)
+    // {
+    //     $product->restore();
+
+    //     return $this->success(ProductResource::make($product) ) ;
+    // }
+
+    public function forceDelete(Product $productWithTrashed): JsonResponse
     {
-        $product->restore();
+        $productWithTrashed->forceDelete();
 
-        return response()->json(['message' => __('messages.product_restored')]);
-    }
-
-    public function forceDelete(Product $product): JsonResponse // TODO: use binding model
-    {
-        $product->forceDelete();
-
-        return $this->success(new ProductResource($product), __('messages.product_deleted'));
+        return $this->success(ProductResource::make($productWithTrashed), __('messages.product_deleted'));
     }
 
     public function store(StoreProductRequest $request): JsonResponse
@@ -99,8 +90,12 @@ class ProductController extends Controller implements HasMiddleware
         // TODO: update images
         $product->update($request->safe()->except(['tag_ids', 'image']));
         $product->syncTags($request->tag_ids);
+        if ($request->hasFile('image')) {
+            $product->clearMediaCollection('image');
+            $product->addMediaFromRequest('image')->toMediaCollection('image');
 
-        return $this->success(ProductResource::make($product), __('messages.product_updated'));
+            return $this->success(ProductResource::make($product), __('messages.product_updated'));
 
+        }
     }
 }
