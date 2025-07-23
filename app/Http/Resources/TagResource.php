@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\App;
+
 class TagResource extends JsonResource
 {
     /**
@@ -13,7 +14,9 @@ class TagResource extends JsonResource
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
-    { $lang = App::getLocale();
+    {
+        $lang = App::getLocale();
+
         return [
             'id' => $this->id,
             'name' => $this->name[$lang],

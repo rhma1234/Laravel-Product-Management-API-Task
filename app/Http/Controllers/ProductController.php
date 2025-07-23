@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Actions\StoreProductAction;
+use App\Actions\UpdateProductAction;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
@@ -12,7 +13,7 @@ use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
-
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 class ProductController extends Controller implements HasMiddleware
 {
     public static function middleware(): array
@@ -22,7 +23,7 @@ class ProductController extends Controller implements HasMiddleware
         ];
     }
 
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
         $products = QueryBuilder::for(Product::class)
             ->allowedFilters([
@@ -45,63 +46,38 @@ class ProductController extends Controller implements HasMiddleware
 
     public function destroy(Product $product): JsonResponse
     {
-        // TODO: use Policy
-        $userId = Auth::user()->id;
-        if ($product->user_id !== $userId) {
-            return response()->json([
-                'message' => 'You are not authorized to update this product.',
-            ]);
-        }
+        // TODO: handle custom errors: NotFoundHttpException
+        $this->authorize('delete', $product);
         $product->delete();
 
-        return $this->success(ProductResource::make($product));
-
+        return $this->success(message: __('messages.product_soft_deleted'));
     }
 
     public function restore(Product $productWithTrashed)
     {
         $productWithTrashed->restore();
 
-        return $this->success(ProductResource::make($productWithTrashed));
+        return $this->success(message: __('messages.product_restored'));
     }
 
     public function forceDelete(Product $productWithTrashed): JsonResponse
     {
         $productWithTrashed->forceDelete();
 
-        return $this->success(ProductResource::make($productWithTrashed), __('messages.product_deleted'));
+        return $this->success(message: __('messages.product_deleted'));
     }
 
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $data = $request->validated();
-        /** @var Product $product */
-        // TODO: isolate this logic to Action
-        $product = Product::create($request->safe()->except(['tag_ids', 'image']));
-        $product->syncTags($request->tag_ids);
-        if ($request->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
-            $product->addMedia($request->file(Product::MEDIA_COLLECTION_IMAGES))->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-        }
+        StoreProductAction::make()->handle($product, $request->validated());
 
         return $this->success(message: __('messages.product_stored'));
     }
 
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
-        // TODO: update images
-        $product->update($request->safe()->except(['tag_ids', 'image']));
-        // TODO: isolate it to Action
-        $product->syncTags($request->tag_ids);
-
-        if ($request->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
-            $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-
-            $product->addMediaFromRequest(Product::MEDIA_COLLECTION_IMAGES)
-                ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-
-        }
+        UpdateProductAction::make()->handle($product, $request->validated());
 
         return $this->success(message: __('messages.product_updated'));
-
     }
 }

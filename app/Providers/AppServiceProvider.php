@@ -22,7 +22,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // TODO: what is the difference between firstOrFail & findOrFail? ?/
+        
         Product::observe(ProductObserver::class);
 
         Route::bind('productWithTrashed', function (string $value) {
