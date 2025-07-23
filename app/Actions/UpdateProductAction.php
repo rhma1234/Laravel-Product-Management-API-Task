@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\Product;
+use Illuminate\Support\Arr;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class UpdateProductAction
@@ -11,14 +12,18 @@ class UpdateProductAction
 
     public function handle(Product $product, array $data): Product
     {
-        $product->update($data->safe()->except(['tag_ids', 'image']));
-        $product->syncTags($data->tag_ids);
+        // TODO: convert it to collection
+        $product->update(Arr::except($data,(['tag_ids', 'image'])));
+        // TODO: optimize this line
+        $product->syncTags($data['tag_ids'] ?? []);
 
-        if ($data->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
+
+         if (!empty($data[Product::MEDIA_COLLECTION_IMAGES]))   {
             $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
 
             $product->addMediaFromRequest(Product::MEDIA_COLLECTION_IMAGES)
                 ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
         }
+        return $product;
     }
 }

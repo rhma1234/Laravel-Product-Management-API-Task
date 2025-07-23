@@ -36,7 +36,7 @@ class ProductController extends Controller implements HasMiddleware
         return $this->success(data: ProductResource::collection($products));
     }
 
-    public function show(Product $product): JsonResponse
+    public function edit(Product $product): JsonResponse
     {
         $product->load(['category', 'tags']);
 
@@ -68,12 +68,12 @@ class ProductController extends Controller implements HasMiddleware
 
     public function store(StoreProductRequest $request): JsonResponse
     {
-        StoreProductAction::make()->handle($product, $request->validated());
+        StoreProductAction::make()->handle($request->validated());
 
         return $this->success(message: __('messages.product_stored'));
     }
 
-    public function update(UpdateProductRequest $request, Product $product): JsonResponse
+    public function update(Product $product, UpdateProductRequest $request): JsonResponse
     {
         UpdateProductAction::make()->handle($product, $request->validated());
 

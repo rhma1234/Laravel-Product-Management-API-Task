@@ -15,12 +15,13 @@ class UserController extends Controller
 {
     public function register(RegisterRequest $request): JsonResponse
     {
+        /** @var User $user */
         $user = User::create($request->validated());
-        $token = $user->createToken('auth_token')->plainTextToken;
+
 
         return $this->success(
             [
-                'token' => $token,
+                'token' => $user->generateToken(),
                 'user' => UserResource::make($user),
             ],
             __('messages.register')
@@ -34,10 +35,9 @@ class UserController extends Controller
             return $this->error(__('messages.login_error'), Response::HTTP_UNAUTHORIZED);
         }
         $user = User::whereEmail($request->email)->firstOrFail();
-        $token = $user->createToken('auth_token')->plainTextToken; // TODO: isolate it to model
 
         return $this->success([
-            'token' => $token,
+                  'token' => $user->generateToken(),
             'user' => UserResource::make($user),
         ], __('messages.logged_in'));
 

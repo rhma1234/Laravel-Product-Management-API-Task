@@ -51,7 +51,7 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Tag::class);
     }
 
-    public function syncTags(array $tagIds): void
+    public function syncTags(?array $tagIds=[]): void
     {
         if (empty($tagIds)) {
             return;

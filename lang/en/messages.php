@@ -10,4 +10,6 @@ return [
     'logged_out' => 'logout done successfully',
     'login_error' => 'Invalid email or password',
     'register' => 'register done successfully',
+    'not_found' => 'not found',
+    // TODO: adding missing keys
 ];

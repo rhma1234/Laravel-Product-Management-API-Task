@@ -3,20 +3,24 @@
 namespace App\Actions;
 
 use App\Models\Product;
+use Illuminate\Support\Arr;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class StoreProductAction
 {
     use AsAction;
-    // TODO: change it to array, line 14
 
-    public function handle(Product $product, array $request): Product
+    public function handle(array $data): Product
     {
-        $product = Product::create($request->safe()->except(['tag_ids', 'image']));
-        $product->syncTags($request->tag_ids);
+        $data = collect($data);
+        /** @var Product $product */
+        $product = Product::create($data->except(['tag_ids', 'image'])->toArray());
 
-        if ($request->hasFile(Product::MEDIA_COLLECTION_IMAGES)) {
-            $product->addMedia($request->file(Product::MEDIA_COLLECTION_IMAGES))->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
+        $product->syncTags($data->get('tag_ids'));
+
+        if ($data->isNotEmpty(Product::MEDIA_COLLECTION_IMAGES)) {
+            $product->addMediaFromRequest(Product::MEDIA_COLLECTION_IMAGES)
+            ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
         }
 
         return $product;
