@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Http\Resources\UserResource;
+
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,14 +17,14 @@ class UserController extends Controller
     {
         $user = User::create($request->validated());
         $token = $user->createToken('auth_token')->plainTextToken;
-        return $this->success(
-     [
-    'token' => $token,
-   'user' => UserResource::make($user),
-],
-  __('messages.register')
-);
 
+        return $this->success(
+            [
+                'token' => $token,
+                'user' => UserResource::make($user),
+            ],
+            __('messages.register')
+        );
 
     }
 
@@ -35,10 +36,10 @@ class UserController extends Controller
         $user = User::whereEmail($request->email)->firstOrFail();
         $token = $user->createToken('auth_token')->plainTextToken; // TODO: isolate it to model
 
-   return $this->success([
-    'token' => $token,
-   'user' => UserResource::make($user),
-], __('messages.logged_in'));
+        return $this->success([
+            'token' => $token,
+            'user' => UserResource::make($user),
+        ], __('messages.logged_in'));
 
     }
 

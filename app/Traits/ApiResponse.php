@@ -15,9 +15,8 @@ trait ApiResponse
         return response()->json($response, $status);
     }
 
-    protected function error(string $message = '', int $status = Response::HTTP_BAD_REQUEST ): JsonResponse
+    protected function error(string $message = '', int $status = Response::HTTP_BAD_REQUEST): JsonResponse
     {
-        
 
         $response = new ApiResponseDTO($message, null);
 
