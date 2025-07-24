@@ -21,13 +21,14 @@ class UpdateProductAction
 
         if ($data->isNotEmpty($data[Product::MEDIA_COLLECTION_IMAGES])) {
             $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-  $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-   foreach (array_keys($data->get('images')) as $index) {
-        $product
-            ->addMediaFromRequest("images.$index")
-            ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-    }
-}
+            $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
+            foreach (array_keys($data->get('images')) as $index) {
+                $product
+                    ->addMediaFromRequest("images.$index")
+                    ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
+            }
+        }
+
         return $product;
-}
+    }
 }

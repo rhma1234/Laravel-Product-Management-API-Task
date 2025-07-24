@@ -8,7 +8,6 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Validation\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -27,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 $response = new ApiResponseDTO(__('messages.not_found'), null);
+
                 return response()->json($response, Response::HTTP_NOT_FOUND);
             }
         });
@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 $response = new ApiResponseDTO(__('messages.unauthenticated'), null);
+
                 return response()->json($response, Response::HTTP_UNAUTHORIZED);
             }
         });
