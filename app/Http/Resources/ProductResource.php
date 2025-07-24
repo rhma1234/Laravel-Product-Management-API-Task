@@ -19,6 +19,9 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
+            'media' => [
+                // TODO:
+            ],
 
         ];
     }

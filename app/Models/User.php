@@ -12,10 +12,10 @@ class User extends Authenticatable
 {
     use HasApiTokens;
 
-   public function generateToken(): string
-{
-    return $this->createToken('auth_token')->plainTextToken;
-}
+    public function generateToken(): string
+    {
+        return $this->createToken('auth_token')->plainTextToken;
+    }
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;

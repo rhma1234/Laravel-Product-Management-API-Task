@@ -31,7 +31,7 @@ class Product extends Model implements HasMedia
         'user_id',
     ];
 
-    public const MEDIA_COLLECTION_IMAGES = 'image';
+    public const MEDIA_COLLECTION_IMAGES = 'images';
 
     protected $casts = [
         'name' => 'array',
@@ -51,7 +51,7 @@ class Product extends Model implements HasMedia
         return $this->belongsToMany(Tag::class);
     }
 
-    public function syncTags(?array $tagIds=[]): void
+    public function syncTags(?array $tagIds = []): void
     {
         if (empty($tagIds)) {
             return;

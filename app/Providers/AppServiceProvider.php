@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
 
         Product::observe(ProductObserver::class);
-  
+
         Route::bind('productWithTrashed', function (string $value) {
             return Product::withTrashed()->findOrFail($value);
         });

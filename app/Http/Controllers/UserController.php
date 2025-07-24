@@ -18,7 +18,6 @@ class UserController extends Controller
         /** @var User $user */
         $user = User::create($request->validated());
 
-
         return $this->success(
             [
                 'token' => $user->generateToken(),
@@ -37,7 +36,7 @@ class UserController extends Controller
         $user = User::whereEmail($request->email)->firstOrFail();
 
         return $this->success([
-                  'token' => $user->generateToken(),
+            'token' => $user->generateToken(),
             'user' => UserResource::make($user),
         ], __('messages.logged_in'));
 

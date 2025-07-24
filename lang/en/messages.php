@@ -11,5 +11,7 @@ return [
     'login_error' => 'Invalid email or password',
     'register' => 'register done successfully',
     'not_found' => 'not found',
-    // TODO: adding missing keys
+    'unauthorized' => 'You are not authorized to access this resource.',
+    'general_error' => 'An unexpected error occurred, please try again later.',
+    'unauthenticated' => 'Please log in to access this resource.',
 ];
