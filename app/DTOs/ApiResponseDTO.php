@@ -5,8 +5,10 @@ namespace App\DTOs;
 class ApiResponseDTO
 {
     public function __construct(
-        // public ?array $message = [],
-        public string $message = '',
+        // TODO:
+        // - $messages must be string or array
+        // - if passing sting convert it to array
+        public array | string $message = [],
         public mixed $data = null,
     ) {}
 }

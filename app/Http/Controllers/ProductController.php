@@ -45,7 +45,7 @@ class ProductController extends Controller implements HasMiddleware
 
     public function destroy(Product $product): JsonResponse
     {
-        // TODO: handle custom errors: NotFoundHttpException
+        
         $this->authorize('delete', $product);
         $product->delete();
 

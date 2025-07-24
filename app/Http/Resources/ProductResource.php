@@ -2,8 +2,9 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Http\Resources\Json\JsonResource;
+use App\Models\Product;
 use Illuminate\Support\Facades\App;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
 {
@@ -19,9 +20,7 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'category' => CategoryResource::make($this->whenLoaded('category')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
-            'media' => [
-                // TODO:
-            ],
+            'images' => ImageResource::collection($this->getMedia(Product::MEDIA_COLLECTION_IMAGES)),
 
         ];
     }
