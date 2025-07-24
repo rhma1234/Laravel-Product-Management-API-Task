@@ -11,7 +11,7 @@ class UpdateProductAction
 
     public function handle(array $data, Product $product): Product
     {
-     
+
         $data = collect($data);
         $product->update(
             $data->except(['tag_ids', 'image'])->toArray()
@@ -21,8 +21,7 @@ class UpdateProductAction
 
         if ($data->isNotEmpty($data[Product::MEDIA_COLLECTION_IMAGES])) {
             $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
-           collect($data->get('images'))->each(function ($image, $key) use ($product)
-            {
+            collect($data->get('images'))->each(function ($image, $key) use ($product) {
                 $product
                     ->addMediaFromRequest("images.$key")
                     ->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);

@@ -16,11 +16,10 @@ class CategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $lang = App::getLocale();
 
         return [
             'id' => $this->id,
-            'name' => $this->name[$lang],
+            'name' => $this->name,
         ];
     }
 }

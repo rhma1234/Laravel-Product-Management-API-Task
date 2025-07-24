@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use App\Enums\CurrencyEnum;
-// use Illuminate\Container\Attributes\Tag;
 use App\Enums\ProductStatusEnum;
+// use Illuminate\Container\Attributes\Tag;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -13,13 +13,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 
 // #[UsePolicy(ProductPolicy::class)]
 class Product extends Model implements HasMedia
 {
     use HasFactory;
+    use HasTranslations;
     use InteractsWithMedia;
     use SoftDeletes;
+
+    public $translatable = ['name', 'description'];
 
     protected $fillable = [
         'name',

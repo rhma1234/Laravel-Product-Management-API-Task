@@ -2,50 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
-use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Http\RedirectResponse;
 
 class UserController extends Controller
 {
-    public function register(RegisterRequest $request): JsonResponse
+    public function register(RegisterRequest $request) :RedirectResponse
     {
         /** @var User $user */
         $user = User::create($request->validated());
+        Auth::login($user);
 
-        return $this->success(
-            [
-                'token' => $user->generateToken(),
-                'user' => UserResource::make($user),
-            ],
-            __('messages.register')
-        );
-
+        return redirect()->intended(route('products.index'));
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function login(LoginRequest $request) : RedirectResponse
     {
         if (! Auth::attempt($request->only('email', 'password'))) {
-            return $this->error(__('messages.login_error'), Response::HTTP_UNAUTHORIZED);
+            // TODO: redirect response
+            return redirect()->intended(route('products.index'));
+
         }
         $user = User::whereEmail($request->email)->firstOrFail();
 
-        return $this->success([
-            'token' => $user->generateToken(),
-            'user' => UserResource::make($user),
-        ], __('messages.logged_in'));
+        return redirect()->intended(route('products.index'));
 
     }
 
-    public function logout(Request $request): JsonResponse
+    public function showRegisterForm()
     {
-        $request->user()->currentAccessToken()->delete();
+        return view('auth.register');
+    }
 
-        return $this->success(message: __('messages.logged_out'));
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function logout(Request $request) // :view
+    {
+        // TODO: adding middleware
+        auth()->logout();
+
+        return redirect('/login');
+
     }
 }

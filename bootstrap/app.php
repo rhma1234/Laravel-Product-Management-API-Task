@@ -8,7 +8,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -36,6 +38,15 @@ return Application::configure(basePath: dirname(__DIR__))
                 $response = new ApiResponseDTO(__('messages.unauthenticated'), null);
 
                 return response()->json($response, Response::HTTP_UNAUTHORIZED);
+            }
+        });
+
+
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                $response = new ApiResponseDTO($e->validator->errors(), null);
+
+                return response()->json($response, Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         });
     })->create();

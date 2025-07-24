@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API\V1;
 
 use App\Actions\StoreProductAction;
 use App\Actions\UpdateProductAction;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -24,31 +24,32 @@ class ProductController extends Controller implements HasMiddleware
         ];
     }
 
-    public function index(): View
+    public function index(): JsonResponse
     {
         // TODO: what is the difference between all pagination methods?
-
+        // TODO: fix this pagination
         $products = QueryBuilder::for(Product::class)
             ->allowedFilters([
                 'status',
                 'category_id',
                 AllowedFilter::exact('tag_id', 'tags.id'),
                 AllowedFilter::operator('price', FilterOperator::DYNAMIC),
-            ])->paginate(10);
+            ])->paginate(1);
 
         $products->load(['tags', 'category']);
+        $products = ProductResource::collection($products);
 
-        return view('products.index');
+        return $this->success($products);
     }
 
-    public function edit(Product $product): View
+    public function edit(Product $product): JsonResponse
     {
         $product->load(['category', 'tags', 'media']);
 
         return $this->success(data: ProductResource::make($product));
     }
 
-    public function destroy(Product $product): View
+    public function destroy(Product $product): JsonResponse
     {
 
         $this->authorize('delete', $product);

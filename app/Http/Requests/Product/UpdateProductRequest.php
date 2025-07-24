@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Product;
 
 use App\Enums\CurrencyEnum;
-use App\Enums\ProductStatusEnum;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Enums\ProductStatusEnum;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProductRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // TODO 7: use policy https://laravel.com/docs/12.x/authorization
-        return true;
+        return Gate::allows('update', $this->route('product'));
     }
 
     public function rules(): array
