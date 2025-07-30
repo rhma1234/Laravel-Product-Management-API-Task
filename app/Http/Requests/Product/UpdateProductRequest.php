@@ -3,11 +3,11 @@
 namespace App\Http\Requests\Product;
 
 use App\Enums\CurrencyEnum;
-use Illuminate\Validation\Rule;
 use App\Enums\ProductStatusEnum;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateProductRequest extends FormRequest
 {

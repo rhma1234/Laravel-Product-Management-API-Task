@@ -10,17 +10,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        api: __DIR__.'/../routes/api.php',
+        // api: __DIR__.'/../routes/api.php',
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(SetLangMiddleware::class);
+        $middleware->web(SetLangMiddleware::class);
     })
 
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -40,7 +39,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json($response, Response::HTTP_UNAUTHORIZED);
             }
         });
-
 
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*')) {

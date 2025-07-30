@@ -34,7 +34,7 @@ class ProductController extends Controller implements HasMiddleware
                 'category_id',
                 AllowedFilter::exact('tag_id', 'tags.id'),
                 AllowedFilter::operator('price', FilterOperator::DYNAMIC),
-            ])->paginate(1);
+            ])->paginate(3);
 
         $products->load(['tags', 'category']);
         $products = ProductResource::collection($products);

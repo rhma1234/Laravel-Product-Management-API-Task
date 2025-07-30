@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Actions\StoreProductAction;
 use App\Actions\UpdateProductAction;
+use App\Enums\ProductStatusEnum;
 use App\Http\Requests\Product\StoreProductRequest;
 use App\Http\Requests\Product\UpdateProductRequest;
-use App\Http\Resources\ProductResource;
+use App\Models\Category;
 use App\Models\Product;
-use Illuminate\Contracts\View\View;
-use Illuminate\Http\JsonResponse;
+use App\Models\Tag;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\View\View;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -20,68 +22,81 @@ class ProductController extends Controller implements HasMiddleware
     public static function middleware(): array
     {
         return [
-            'auth:sanctum',
+            'auth',
         ];
+    }
+
+    public function create(): View
+    {
+        // TODO: what is the difference between get and all?
+        $categories = Category::get();
+        $tags = Tag::all();
+        $statuses = ProductStatusEnum::cases();
+
+        return view('products.create', compact('categories', 'tags', 'statuses'));
     }
 
     public function index(): View
     {
-        // TODO: what is the difference between all pagination methods?
 
-        $products = QueryBuilder::for(Product::class)
+        $products = QueryBuilder::for(Product::query()->withTrashed())
             ->allowedFilters([
                 'status',
                 'category_id',
                 AllowedFilter::exact('tag_id', 'tags.id'),
                 AllowedFilter::operator('price', FilterOperator::DYNAMIC),
-            ])->paginate(10);
+            ])->paginate(6);
 
         $products->load(['tags', 'category']);
 
-        return view('products.index');
+        return view('products.index', compact('products'));
+
     }
 
     public function edit(Product $product): View
     {
+        $categories = Category::all();
+        $tags = Tag::all();
         $product->load(['category', 'tags', 'media']);
-
-        return $this->success(data: ProductResource::make($product));
+        $statuses = ProductStatusEnum::cases();
+        return view('products.edit', compact('product', 'categories', 'tags','statuses'));
     }
 
-    public function destroy(Product $product): View
+    public function destroy(Product $product): RedirectResponse
     {
-
         $this->authorize('delete', $product);
         $product->delete();
 
-        return $this->success(message: __('messages.product_soft_deleted'));
+        return redirect()->route('products.index')->with('success', __('messages.product_soft_deleted'));
     }
 
-    public function restore(Product $productWithTrashed)
+    public function restore(Product $productWithTrashed): RedirectResponse
     {
         $productWithTrashed->restore();
 
-        return $this->success(message: __('messages.product_restored'));
+        return redirect()->route('products.index')->with('success', __('messages.product_restored'));
     }
 
-    public function forceDelete(Product $productWithTrashed): JsonResponse
+    public function forceDelete(Product $productWithTrashed): RedirectResponse
     {
         $productWithTrashed->forceDelete();
 
-        return $this->success(message: __('messages.product_deleted'));
+        return redirect()->route('products.index')->with('success', __('messages.product_deleted'));
+
     }
 
-    public function store(StoreProductRequest $request): JsonResponse
+    public function store(StoreProductRequest $request): RedirectResponse
     {
         StoreProductAction::make()->handle($request->validated());
 
-        return $this->success(message: __('messages.product_stored'));
+        return redirect()->route('products.index')->with('success', __('messages.product_stored'));
+
     }
 
-    public function update(Product $product, UpdateProductRequest $request): JsonResponse
+    public function update(Product $product, UpdateProductRequest $request): RedirectResponse
     {
         UpdateProductAction::make()->handle($request->validated(), $product);
 
-        return $this->success(message: __('messages.product_updated'));
+        return redirect()->route('products.index')->with('success', __('messages.product_updated'));
     }
 }

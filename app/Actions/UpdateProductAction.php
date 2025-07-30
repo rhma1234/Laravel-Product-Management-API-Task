@@ -19,7 +19,7 @@ class UpdateProductAction
 
         $product->syncTags($data->get('tag_ids'));
 
-        if ($data->isNotEmpty($data[Product::MEDIA_COLLECTION_IMAGES])) {
+        if ($data->has(Product::MEDIA_COLLECTION_IMAGES) && ! empty($data->get(Product::MEDIA_COLLECTION_IMAGES))) {
             $product->clearMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
             collect($data->get('images'))->each(function ($image, $key) use ($product) {
                 $product

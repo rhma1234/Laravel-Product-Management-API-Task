@@ -4,7 +4,10 @@ namespace App\Providers;
 
 use App\Models\Product;
 use App\Observers\ProductObserver;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
 
+        Paginator::useBootstrapFive();
+        App::setLocale(Session::get('locale', config('app.locale')));
         Product::observe(ProductObserver::class);
 
         Route::bind('productWithTrashed', function (string $value) {
