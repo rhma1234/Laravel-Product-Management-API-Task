@@ -26,9 +26,8 @@ class UserController extends Controller
         if (! Auth::attempt($request->only('email', 'password'))) {
 
             return redirect()->route('login')->withInput()->withErrors([
-                'email' => __('messages.login_error')
+                'email' => __('messages.login_error'),
             ]);
-
 
         }
 

@@ -19,7 +19,7 @@ class StoreProductAction
         $product->syncTags($data->get('tag_ids'));
 
         if (($data->isNotEmpty($data[Product::MEDIA_COLLECTION_IMAGES]))) {
-            
+
             collect($data->get('images'))->each(function ($image, $key) use ($product) {
                 $product->addMediaFromRequest("images.$key")->toMediaCollection(Product::MEDIA_COLLECTION_IMAGES);
             });

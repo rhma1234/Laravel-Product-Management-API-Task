@@ -10,10 +10,10 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [UserController::class, 'showRegisterForm'])->name('register');
     Route::post('register', [UserController::class, 'register']);
 });
-    Route::resource('products', ProductController::class);
-    Route::post('/products/{productWithTrashed}/restore', [ProductController::class, 'restore'])->name('products.restore');
-    Route::delete('/products/{productWithTrashed}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
-    Route::post('/logout', [UserController::class, 'logout'])->middleware('auth')->name('logout');
+Route::resource('products', ProductController::class);
+Route::post('/products/{productWithTrashed}/restore', [ProductController::class, 'restore'])->name('products.restore');
+Route::delete('/products/{productWithTrashed}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
+Route::post('/logout', [UserController::class, 'logout'])->middleware('auth')->name('logout');
 
 // TODO: isolated it to controller
 Route::get('lang/{locale}', function ($locale) {

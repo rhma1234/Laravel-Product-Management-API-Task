@@ -59,7 +59,8 @@ class ProductController extends Controller implements HasMiddleware
         $tags = Tag::all();
         $product->load(['category', 'tags', 'media']);
         $statuses = ProductStatusEnum::cases();
-        return view('products.edit', compact('product', 'categories', 'tags','statuses'));
+
+        return view('products.edit', compact('product', 'categories', 'tags', 'statuses'));
     }
 
     public function destroy(Product $product): RedirectResponse
