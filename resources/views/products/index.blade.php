@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-<head>
-    <meta charset="UTF-8">
-    <title>@lang('messages.product_list')</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}">
+@extends('layouts.layout')
 
-<div class="container mt-5">
-
+@section('content')
     <h1 class="mb-4">{{ __('messages.product_list') }}</h1>
-
-    {{-- زرار تغيير اللغة --}}
-    <a href="{{ route('lang.switch', 'ar') }}">عربي</a> |
-    <a href="{{ route('lang.switch', 'en') }}">English</a>
 
     {{-- رسالة نجاح --}}
     @if (session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
-
-    {{-- زرار تسجيل الخروج --}}
-    <form method="POST" action="{{ route('logout') }}">
-        @csrf
-        {{-- TODO: what is the meaning of csrf --}}
-        <button type="submit" class="btn btn-secondary mb-3">{{ __('messages.logout') }}</button>
-    </form>
 
     {{-- زر إضافة منتج --}}
     <a href="{{ route('products.create') }}" class="btn btn-primary mb-3">{{ __('messages.add_new_product') }}</a>
@@ -53,7 +34,7 @@
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->currency }}</td>
                     <td>{{ $product->status }}</td>
-                   <td>{{ $product->category?->name  }}</td>
+                    <td>{{ $product->category?->name }}</td>
                     <td>
                         @foreach ($product->tags as $tag)
                             <span class="badge bg-info text-dark">
@@ -101,7 +82,4 @@
 
     {{-- روابط الصفحات --}}
     {{ $products->links() }}
-</div>
-
-</body>
-</html>
+@endsection

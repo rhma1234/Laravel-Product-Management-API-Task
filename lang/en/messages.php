@@ -44,5 +44,22 @@ return [
     'submit_update' => 'Update Product',
     'submit_create' => 'create Product',
     'select_placeholder' => 'choose',
-
+  'email' => 'Email Address',
+    'password' => 'Password',
+    'login_error' => 'Invalid login credentials',
+    'register_here' => 'Register here',
+    'no_account' => "Don't have an account?",
+    'login' => 'Login',
+    'login_title' => 'Login',
+       'register_title' => 'Register a New Account',
+    'name' => 'Name',
+    'password_confirmation' => 'Confirm Password',
+    'register' => 'Register',
+    'already_have_account' => 'Already have an account?',
+    'login_here' => 'Login',
+    'back_to_home'=>'home page',
+    'app_name'=>'product Mannagement system',
+    'no_products'=>' add products now',
+    'select'=>'choose'
 ];
+

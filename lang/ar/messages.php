@@ -45,4 +45,22 @@ return [
     'submit_update' => 'تحديث المنتج',
     'submit_create' => 'اضافة منتج ',
     'select_placeholder' => 'اختر',
+
+'email'=>'البريد الالكتروني'
+,   'password' => 'كلمة المرور',
+    'login_error' => 'بيانات الدخول غير صحيحة',
+    'register_here' => 'سجل هنا',
+    'no_account' => 'ليس لديك حساب؟',
+    'login' => 'دخول',
+    'login_title' => 'تسجيل الدخول',
+     'register_title' => 'تسجيل حساب جديد',
+    'name' => 'الاسم',
+    'password_confirmation' => 'تأكيد كلمة المرور',
+    'register' => 'تسجيل',
+    'already_have_account' => 'لديك حساب بالفعل؟',
+    'login_here' => 'تسجيل الدخول',
+       'back_to_home'=>'الصفحه الرئيسيه',
+       'app_name'=>'ادراة المنتجات',
+     'no_products'=>'لايوجد منتجات مضافه',
+      'select'=>'اختر'
 ];

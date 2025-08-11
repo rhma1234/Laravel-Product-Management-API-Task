@@ -16,6 +16,7 @@ use Illuminate\View\View;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\Enums\FilterOperator;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\ViewModels\ProductFormViewModel;
 
 class ProductController extends Controller implements HasMiddleware
 {
@@ -24,22 +25,24 @@ class ProductController extends Controller implements HasMiddleware
         return [
             'auth',
         ];
+
+
+
     }
+   
 
     public function create(): View
     {
-        // TODO: what is the difference between get and all?
-        $categories = Category::get();
-        $tags = Tag::all();
-        $statuses = ProductStatusEnum::cases();
-
-        return view('products.create', compact('categories', 'tags', 'statuses'));
+        return view('products.create', new ProductFormViewModel());
     }
 
     public function index(): View
     {
-
-        $products = QueryBuilder::for(Product::query()->withTrashed())
+    $products = QueryBuilder::for(
+    Product::query()
+        ->withTrashed()
+        ->where('user_id', auth()->id())
+)
             ->allowedFilters([
                 'status',
                 'category_id',
@@ -55,12 +58,8 @@ class ProductController extends Controller implements HasMiddleware
 
     public function edit(Product $product): View
     {
-        $categories = Category::all();
-        $tags = Tag::all();
         $product->load(['category', 'tags', 'media']);
-        $statuses = ProductStatusEnum::cases();
-
-        return view('products.edit', compact('product', 'categories', 'tags', 'statuses'));
+        return view('products.edit', new ProductFormViewModel($product));
     }
 
     public function destroy(Product $product): RedirectResponse

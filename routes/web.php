@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -15,12 +15,4 @@ Route::post('/products/{productWithTrashed}/restore', [ProductController::class,
 Route::delete('/products/{productWithTrashed}/force-delete', [ProductController::class, 'forceDelete'])->name('products.forceDelete');
 Route::post('/logout', [UserController::class, 'logout'])->middleware('auth')->name('logout');
 
-// TODO: isolated it to controller
-Route::get('lang/{locale}', function ($locale) {
-    if (in_array($locale, ['ar', 'en'])) {
-        session(['locale' => $locale]);
-        app()->setLocale($locale);
-    }
-
-    return redirect()->back();
-})->name('lang.switch');
+Route::get('lang/{locale}', [LanguageController::class, 'switch'])->name('lang.switch');
