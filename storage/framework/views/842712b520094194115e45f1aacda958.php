@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="<?php echo e(app()->getLocale()); ?>">
-<head>
-    <meta charset="UTF-8">
-    <title><?php echo app('translator')->get('messages.product_list'); ?></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body dir="<?php echo e(app()->getLocale() == 'ar' ? 'rtl' : 'ltr'); ?>">
 
-<div class="container mt-5">
 
+<?php $__env->startSection('content'); ?>
     <h1 class="mb-4"><?php echo e(__('messages.product_list')); ?></h1>
-
-    
-    <a href="<?php echo e(route('lang.switch', 'ar')); ?>">عربي</a> |
-    <a href="<?php echo e(route('lang.switch', 'en')); ?>">English</a>
 
     
     <?php if(session('success')): ?>
         <div class="alert alert-success"><?php echo e(session('success')); ?></div>
     <?php endif; ?>
-
-    
-    <form method="POST" action="<?php echo e(route('logout')); ?>">
-        <?php echo csrf_field(); ?>
-        
-        <button type="submit" class="btn btn-secondary mb-3"><?php echo e(__('messages.logout')); ?></button>
-    </form>
 
     
     <a href="<?php echo e(route('products.create')); ?>" class="btn btn-primary mb-3"><?php echo e(__('messages.add_new_product')); ?></a>
@@ -53,7 +34,7 @@
                     <td><?php echo e($product->price); ?></td>
                     <td><?php echo e($product->currency); ?></td>
                     <td><?php echo e($product->status); ?></td>
-                   <td><?php echo e($product->category?->name); ?></td>
+                    <td><?php echo e($product->category?->name); ?></td>
                     <td>
                         <?php $__currentLoopData = $product->tags; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $tag): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <span class="badge bg-info text-dark">
@@ -104,8 +85,5 @@
     
     <?php echo e($products->links()); ?>
 
-</div>
-
-</body>
-</html>
-<?php /**PATH C:\laragon\www\task\resources\views/products/index.blade.php ENDPATH**/ ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.layout', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\task\resources\views/products/index.blade.php ENDPATH**/ ?>

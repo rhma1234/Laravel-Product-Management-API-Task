@@ -25,11 +25,8 @@ class ProductController extends Controller implements HasMiddleware
         return [
             'auth',
         ];
-
-
-
     }
-   
+
 
     public function create(): View
     {

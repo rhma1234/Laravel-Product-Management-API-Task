@@ -26,8 +26,8 @@ class StoreProductRequest extends FormRequest
     {
         return [
             'name' => ['required', 'array'],
-            'name.en' => ['required', 'string'],
-            'name.ar' => ['required', 'string'],
+            'name.en' => ['required', 'string' , 'max:60'],
+            'name.ar' => ['required', 'string', 'max:60'],
             'images' => ['nullable', 'array'],
             'images.*' => ['nullable', 'image', 'max:2048'],
             'description' => ['nullable', 'array'],
